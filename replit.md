@@ -25,9 +25,11 @@ A personal journaling app with daily writing prompts, mood tracking, and a visua
 ## Where things live
 
 - `lib/api-spec/openapi.yaml` — single source of truth for all API contracts
-- `lib/db/src/schema/` — Drizzle schema (prompts.ts, entries.ts, moods.ts)
-- `artifacts/api-server/src/routes/` — route handlers (prompts, entries, moods, dashboard)
+- `lib/db/src/schema/` — Drizzle schema (prompts.ts, entries.ts, moods.ts, breathing-sessions.ts)
+- `artifacts/api-server/src/routes/` — route handlers (prompts, entries, moods, dashboard, breathing-sessions)
 - `artifacts/journal-app/src/` — React frontend
+- `artifacts/journal-app/src/lib/activities.ts` — 14 mindful activities with step-by-step guides
+- `artifacts/journal-app/src/lib/quotes.ts` — 50 daily mindfulness quotes
 
 ## Architecture decisions
 
@@ -38,11 +40,14 @@ A personal journaling app with daily writing prompts, mood tracking, and a visua
 
 ## Product
 
-- **Dashboard** — greeting, today's prompt, streak counter, mood log, recent entries
+- **Dashboard** — greeting, today's prompt, streak counter, mood log, weekly check-in, daily quote, today's mindful activity, recent entries
 - **Write** — compose entries with today's prompt, inline mood rating 1–5
 - **Journal** — browse all past entries grouped by month
+- **Entry View** — individual entry detail with edit and delete actions
 - **Calendar** — visual mood calendar with color-coded days, month navigation
-- **Insights** — mood stats: streak, average score, 7-day trend, mood breakdown chart
+- **Insights** — mood stats: streak, average score, 7-day trend, mood breakdown chart; entry stats: total entries, current streak, longest streak
+- **Breathing** — guided breathing exercises with 4 techniques (Box 4-4-4-4, 4-7-8, Deep Belly 5-5, Coherent 5.5-5.5), animated visualizer, audio tone cues, session history and stats tracking
+- **Mindful Activities** — 14 practices across 6 categories (movement, breathing, meditation, reflection, nature, creative) with step-by-step guides and completion tracking; **Yoga Guide** with 6 beginner poses including Sanskrit names, benefits, and breath cues; **Color Memory** focus game
 
 ## User preferences
 
