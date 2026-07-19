@@ -3,20 +3,27 @@ info:
   # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: Mental Wellness Journal API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: prompts
+    description: Writing prompts
+  - name: entries
+    description: Journal entries
+  - name: moods
+    description: Mood logs
+  - name: dashboard
+    description: Dashboard summary
 paths:
   /healthz:
     get:
       operationId: healthCheck
       tags: [health]
       summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
@@ -24,13 +31,447 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /prompts:
+    get:
+      operationId: listPrompts
+      tags: [prompts]
+      summary: List all writing prompts
+      responses:
+        "200":
+          description: List of prompts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/WritingPrompt"
+
+  /prompts/today:
+    get:
+      operationId: getTodayPrompt
+      tags: [prompts]
+      summary: Get today's writing prompt
+      responses:
+        "200":
+          description: Today's prompt
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WritingPrompt"
+
+  /entries:
+    get:
+      operationId: listEntries
+      tags: [entries]
+      summary: List journal entries
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+        - name: month
+          in: query
+          description: Filter by month YYYY-MM
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of journal entries
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EntryList"
+    post:
+      operationId: createEntry
+      tags: [entries]
+      summary: Create a journal entry
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EntryInput"
+      responses:
+        "201":
+          description: Entry created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/JournalEntry"
+
+  /entries/stats:
+    get:
+      operationId: getEntryStats
+      tags: [entries]
+      summary: Get journal entry statistics
+      responses:
+        "200":
+          description: Entry stats
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EntryStats"
+
+  /entries/{id}:
+    get:
+      operationId: getEntry
+      tags: [entries]
+      summary: Get a single journal entry
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Journal entry
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/JournalEntry"
+        "404":
+          description: Not found
+    patch:
+      operationId: updateEntry
+      tags: [entries]
+      summary: Update a journal entry
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EntryUpdate"
+      responses:
+        "200":
+          description: Updated entry
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/JournalEntry"
+        "404":
+          description: Not found
+    delete:
+      operationId: deleteEntry
+      tags: [entries]
+      summary: Delete a journal entry
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /moods:
+    get:
+      operationId: listMoods
+      tags: [moods]
+      summary: List mood logs
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 30
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+      responses:
+        "200":
+          description: List of mood logs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MoodLog"
+    post:
+      operationId: createMood
+      tags: [moods]
+      summary: Log a mood
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MoodInput"
+      responses:
+        "201":
+          description: Mood logged
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MoodLog"
+
+  /moods/calendar:
+    get:
+      operationId: getMoodCalendar
+      tags: [moods]
+      summary: Get mood data grouped by date for calendar view
+      parameters:
+        - name: month
+          in: query
+          required: true
+          description: Month in YYYY-MM format
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Mood calendar data
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MoodCalendarDay"
+
+  /moods/stats:
+    get:
+      operationId: getMoodStats
+      tags: [moods]
+      summary: Get mood statistics
+      responses:
+        "200":
+          description: Mood stats
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MoodStats"
+
+  /moods/{id}:
+    delete:
+      operationId: deleteMood
+      tags: [moods]
+      summary: Delete a mood log
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /dashboard:
+    get:
+      operationId: getDashboard
+      tags: [dashboard]
+      summary: Get dashboard summary
+      responses:
+        "200":
+          description: Dashboard data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Dashboard"
+
 components:
   schemas:
     HealthStatus:
       type: object
+      required: [status]
       properties:
         status:
           type: string
-      required:
-        - status
 
+    WritingPrompt:
+      type: object
+      required: [id, text, category]
+      properties:
+        id:
+          type: integer
+        text:
+          type: string
+        category:
+          type: string
+
+    JournalEntry:
+      type: object
+      required: [id, date, content, createdAt, updatedAt]
+      properties:
+        id:
+          type: integer
+        date:
+          type: string
+          description: Date in YYYY-MM-DD format
+        content:
+          type: string
+        promptId:
+          type: ["integer", "null"]
+        promptText:
+          type: ["string", "null"]
+        moodRating:
+          type: ["integer", "null"]
+          description: Mood rating 1-5 linked to this entry
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+
+    EntryList:
+      type: object
+      required: [entries, total]
+      properties:
+        entries:
+          type: array
+          items:
+            $ref: "#/components/schemas/JournalEntry"
+        total:
+          type: integer
+
+    EntryInput:
+      type: object
+      required: [content]
+      properties:
+        content:
+          type: string
+          minLength: 1
+        date:
+          type: string
+          description: Date in YYYY-MM-DD format (defaults to today)
+        promptId:
+          type: ["integer", "null"]
+        moodRating:
+          type: ["integer", "null"]
+          description: 1=awful, 2=bad, 3=okay, 4=good, 5=great
+
+    EntryUpdate:
+      type: object
+      properties:
+        content:
+          type: string
+          minLength: 1
+        moodRating:
+          type: ["integer", "null"]
+
+    EntryStats:
+      type: object
+      required: [totalEntries, currentStreak, longestStreak, thisWeekCount, thisMonthCount]
+      properties:
+        totalEntries:
+          type: integer
+        currentStreak:
+          type: integer
+          description: Days in a row with an entry
+        longestStreak:
+          type: integer
+        thisWeekCount:
+          type: integer
+        thisMonthCount:
+          type: integer
+
+    MoodLog:
+      type: object
+      required: [id, date, mood, createdAt]
+      properties:
+        id:
+          type: integer
+        date:
+          type: string
+          description: Date in YYYY-MM-DD format
+        mood:
+          type: string
+          enum: [awful, bad, okay, good, great]
+        note:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+
+    MoodInput:
+      type: object
+      required: [mood]
+      properties:
+        mood:
+          type: string
+          enum: [awful, bad, okay, good, great]
+        note:
+          type: ["string", "null"]
+        date:
+          type: string
+          description: Date in YYYY-MM-DD format (defaults to today)
+
+    MoodCalendarDay:
+      type: object
+      required: [date, mood]
+      properties:
+        date:
+          type: string
+        mood:
+          type: string
+          enum: [awful, bad, okay, good, great]
+        note:
+          type: ["string", "null"]
+
+    MoodStats:
+      type: object
+      required: [totalLogs, currentStreak, averageMoodScore, moodBreakdown, recentTrend]
+      properties:
+        totalLogs:
+          type: integer
+        currentStreak:
+          type: integer
+          description: Days in a row with a mood log
+        averageMoodScore:
+          type: number
+          description: Average mood 1-5
+        moodBreakdown:
+          $ref: "#/components/schemas/MoodBreakdown"
+        recentTrend:
+          type: array
+          description: Last 7 days of moods
+          items:
+            $ref: "#/components/schemas/MoodCalendarDay"
+
+    MoodBreakdown:
+      type: object
+      required: [awful, bad, okay, good, great]
+      properties:
+        awful:
+          type: integer
+        bad:
+          type: integer
+        okay:
+          type: integer
+        good:
+          type: integer
+        great:
+          type: integer
+
+    Dashboard:
+      type: object
+      required: [todayPrompt, recentEntries, todayMood, entryStats, moodStats]
+      properties:
+        todayPrompt:
+          $ref: "#/components/schemas/WritingPrompt"
+        recentEntries:
+          type: array
+          items:
+            $ref: "#/components/schemas/JournalEntry"
+        todayMood:
+          nullable: true
+          oneOf:
+            - $ref: "#/components/schemas/MoodLog"
+            - type: "null"
+        entryStats:
+          $ref: "#/components/schemas/EntryStats"
+        moodStats:
+          $ref: "#/components/schemas/MoodStats"

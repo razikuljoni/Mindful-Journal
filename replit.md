@@ -1,10 +1,11 @@
-# [Project name]
+# Luminary — Mental Wellness Journal
 
-_Replace the heading above with the project's name, and this line with one sentence describing what this app does for users._
+A personal journaling app with daily writing prompts, mood tracking, and a visual mood calendar. Designed to feel like a quiet, warm space for reflection.
 
 ## Run & Operate
 
-- `pnpm --filter @workspace/api-server run dev` — run the API server (port 5000)
+- `pnpm --filter @workspace/journal-app run dev` — run the frontend (port assigned by workflow)
+- `pnpm --filter @workspace/api-server run dev` — run the API server
 - `pnpm run typecheck` — full typecheck across all packages
 - `pnpm run build` — typecheck + build all packages
 - `pnpm --filter @workspace/api-spec run codegen` — regenerate API hooks and Zod schemas from the OpenAPI spec
@@ -14,6 +15,7 @@ _Replace the heading above with the project's name, and this line with one sente
 ## Stack
 
 - pnpm workspaces, Node.js 24, TypeScript 5.9
+- Frontend: React + Vite, Wouter (routing), Framer Motion, Recharts, TanStack Query
 - API: Express 5
 - DB: PostgreSQL + Drizzle ORM
 - Validation: Zod (`zod/v4`), `drizzle-zod`
@@ -22,15 +24,25 @@ _Replace the heading above with the project's name, and this line with one sente
 
 ## Where things live
 
-_Populate as you build — short repo map plus pointers to the source-of-truth file for DB schema, API contracts, theme files, etc._
+- `lib/api-spec/openapi.yaml` — single source of truth for all API contracts
+- `lib/db/src/schema/` — Drizzle schema (prompts.ts, entries.ts, moods.ts)
+- `artifacts/api-server/src/routes/` — route handlers (prompts, entries, moods, dashboard)
+- `artifacts/journal-app/src/` — React frontend
 
 ## Architecture decisions
 
-_Populate as you build — non-obvious choices a reader couldn't infer from the code (3-5 bullets)._
+- Mood calendar uses latest mood per day when multiple are logged the same day.
+- Today's writing prompt is deterministically selected by day-of-year (mod total prompts), so all users see the same prompt daily without a DB column.
+- Streak calculation runs in application code rather than SQL for simplicity.
+- Entry date is stored as a `text` YYYY-MM-DD string (not timestamp) to avoid timezone issues.
 
 ## Product
 
-_Describe the high-level user-facing capabilities of this app once they exist._
+- **Dashboard** — greeting, today's prompt, streak counter, mood log, recent entries
+- **Write** — compose entries with today's prompt, inline mood rating 1–5
+- **Journal** — browse all past entries grouped by month
+- **Calendar** — visual mood calendar with color-coded days, month navigation
+- **Insights** — mood stats: streak, average score, 7-day trend, mood breakdown chart
 
 ## User preferences
 
@@ -38,7 +50,8 @@ _Populate as you build — explicit user instructions worth remembering across s
 
 ## Gotchas
 
-_Populate as you build — sharp edges, "always run X before Y" rules._
+- After changing `lib/db/src/schema/`, run `pnpm run typecheck:libs` before checking artifact packages (stale declarations cause false import errors).
+- After changing `lib/api-spec/openapi.yaml`, always re-run `pnpm --filter @workspace/api-spec run codegen` before using updated types.
 
 ## Pointers
 
