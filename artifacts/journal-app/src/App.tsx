@@ -10,6 +10,8 @@ import Entries from '@/pages/entries';
 import EntryView from '@/pages/entry-view';
 import Calendar from '@/pages/calendar';
 import Insights from '@/pages/insights';
+import Breathe from '@/pages/breathe';
+import Mindful from '@/pages/mindful';
 import NotFound from '@/pages/not-found';
 
 const queryClient = new QueryClient({
@@ -31,6 +33,8 @@ function Router() {
         <Route path="/entries/:id" component={EntryView} />
         <Route path="/calendar" component={Calendar} />
         <Route path="/insights" component={Insights} />
+        <Route path="/breathe" component={Breathe} />
+        <Route path="/mindful" component={Mindful} />
         <Route component={NotFound} />
       </Switch>
     </Layout>

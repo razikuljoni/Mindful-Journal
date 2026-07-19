@@ -271,6 +271,57 @@ paths:
         "204":
           description: Deleted
 
+  /breathing-sessions:
+    get:
+      operationId: listBreathingSessions
+      tags: [breathe]
+      summary: List breathing sessions
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+      responses:
+        "200":
+          description: List of breathing sessions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/BreathingSession"
+    post:
+      operationId: createBreathingSession
+      tags: [breathe]
+      summary: Log a completed breathing session
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BreathingSessionInput"
+      responses:
+        "201":
+          description: Session logged
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BreathingSession"
+
+  /breathing-sessions/stats:
+    get:
+      operationId: getBreathingStats
+      tags: [breathe]
+      summary: Get breathing session statistics
+      responses:
+        "200":
+          description: Breathing stats
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BreathingStats"
+
   /dashboard:
     get:
       operationId: getDashboard
@@ -455,6 +506,64 @@ components:
           type: integer
         great:
           type: integer
+
+    BreathingSession:
+      type: object
+      required: [id, technique, setsCompleted, durationSeconds, createdAt]
+      properties:
+        id:
+          type: integer
+        technique:
+          type: string
+          enum: [box, "478", deep-belly, coherent]
+        setsCompleted:
+          type: integer
+        durationSeconds:
+          type: integer
+        createdAt:
+          type: string
+
+    BreathingSessionInput:
+      type: object
+      required: [technique, setsCompleted, durationSeconds]
+      properties:
+        technique:
+          type: string
+          enum: [box, "478", deep-belly, coherent]
+        setsCompleted:
+          type: integer
+          minimum: 1
+        durationSeconds:
+          type: integer
+          minimum: 1
+
+    BreathingStats:
+      type: object
+      required: [totalSessions, totalMinutes, thisWeekSessions, longestStreak, currentStreak, byTechnique]
+      properties:
+        totalSessions:
+          type: integer
+        totalMinutes:
+          type: number
+        thisWeekSessions:
+          type: integer
+        longestStreak:
+          type: integer
+          description: Longest consecutive days with a breathing session
+        currentStreak:
+          type: integer
+        byTechnique:
+          type: object
+          required: [box, "478", deep-belly, coherent]
+          properties:
+            box:
+              type: integer
+            "478":
+              type: integer
+            deep-belly:
+              type: integer
+            coherent:
+              type: integer
 
     Dashboard:
       type: object

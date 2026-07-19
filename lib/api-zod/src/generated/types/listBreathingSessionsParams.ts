@@ -6,7 +6,6 @@
  * OpenAPI spec version: 0.1.0
  */
 
-export type ListMoodsParams = {
+export type ListBreathingSessionsParams = {
 limit?: number;
-offset?: number;
 };
