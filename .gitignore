@@ -47,5 +47,18 @@ Thumbs.db
 # Replit
 .cache/
 .local/
+.playwright-mcp/
 
 .omo
+
+# local env
+.env
+.env.local
+.env.*.local
+
+# tool caches
+.eslintcache
+.pnpm-debug.log*
+
+# generated hooks
+.husky/_/

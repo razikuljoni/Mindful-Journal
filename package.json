@@ -4,16 +4,40 @@
   "license": "MIT",
   "scripts": {
     "preinstall": "sh -c 'rm -f package-lock.json yarn.lock; case \"$npm_config_user_agent\" in pnpm/*) ;; *) echo \"Use pnpm instead\" >&2; exit 1 ;; esac'",
-    "build": "pnpm run typecheck && pnpm -r --if-present run build",
+    "bootstrap": "pnpm install",
+    "db:push": "pnpm --filter @workspace/scripts run db:push",
+    "dev:api": "pnpm --filter @workspace/scripts run dev:api",
+    "dev:web": "pnpm --filter @workspace/scripts run dev:web",
+    "dev:mockup": "pnpm --filter @workspace/scripts run dev:mockup",
+    "start:dev": "pnpm run dev:api & pnpm run dev:web & wait",
+    "check:env": "pnpm --filter @workspace/scripts run check:env",
+    "build": "pnpm run typecheck && pnpm --filter @workspace/scripts run build:workspace",
     "typecheck:libs": "tsc --build",
-    "typecheck": "pnpm run typecheck:libs && pnpm -r --filter \"./artifacts/**\" --filter \"./scripts\" --if-present run typecheck"
+    "typecheck": "pnpm run typecheck:libs && pnpm -r --filter \"./artifacts/**\" --filter \"./scripts\" --if-present run typecheck",
+    "format": "prettier . --write",
+    "format:check": "prettier . --check",
+    "lint": "eslint .",
+    "check": "pnpm run check:env && pnpm run format:check && pnpm run lint && pnpm run build",
+    "prepare": "husky",
+    "doctor": "npx react-doctor@latest"
   },
   "private": true,
-  "dependencies": {
-    "@replit/connectors-sdk": "^0.4.1"
-  },
+  "dependencies": {},
   "devDependencies": {
+    "@eslint/js": "^9.38.0",
+    "eslint": "^9.38.0",
+    "globals": "^16.4.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.6",
     "prettier": "^3.9.5",
-    "typescript": "~5.9.3"
+    "typescript": "~5.9.3",
+    "typescript-eslint": "^8.46.1"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,mjs,cjs}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md,yml,yaml}": "prettier --write"
   }
 }

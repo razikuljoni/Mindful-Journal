@@ -5,7 +5,7 @@ import { format } from "date-fns";
 import { MOOD_EMOJIS, MOOD_LABELS } from "@/lib/mood-utils";
 import { BookX } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { JournalEntry } from "@workspace/api-client-react/src/generated/api.schemas";
+import { JournalEntry } from "@workspace/api-client-react";
 
 export default function Entries() {
   const { data, isLoading } = useListEntries({ limit: 100 });

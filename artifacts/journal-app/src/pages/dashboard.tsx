@@ -29,6 +29,8 @@ function WeeklyCheckin() {
       const t = setTimeout(() => setVisible(true), 3000);
       return () => clearTimeout(t);
     }
+
+    return undefined;
   }, []);
 
   const handleAnswer = (answer: "better" | "same" | "harder") => {
