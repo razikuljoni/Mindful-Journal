@@ -1,8 +1,8 @@
 import { useGetMoodStats, useGetEntryStats } from "@workspace/api-client-react";
 import { motion } from "framer-motion";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, PieChart, Pie, Legend } from "recharts";
-import { MOOD_COLORS, MOOD_LABELS } from "@/lib/mood-utils";
+import { MOOD_LABELS } from "@/lib/mood-utils";
 import { format, parseISO } from "date-fns";
 import { Activity, PenTool, Flame, CalendarDays } from "lucide-react";
 
@@ -76,7 +76,7 @@ export default function Insights() {
         {/* 7-Day Trend Chart */}
         <Card className="bg-card shadow-sm border-card-border">
           <CardHeader>
-            <CardTitle className="text-xl font-serif">Recent Mood Trend</CardTitle>
+            <h2 className="text-xl font-serif">Recent Mood Trend</h2>
           </CardHeader>
           <CardContent>
             {trendData.length > 0 ? (
@@ -131,13 +131,14 @@ export default function Insights() {
         {/* Breakdown Chart */}
         <Card className="bg-card shadow-sm border-card-border">
           <CardHeader>
-            <CardTitle className="text-xl font-serif">Overall Mood Distribution</CardTitle>
+            <h2 className="text-xl font-serif">Overall Mood Distribution</h2>
           </CardHeader>
           <CardContent>
             {breakdownData.length > 0 ? (
               <div className="h-[300px] w-full">
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
+                <div className="h-full" role="img" aria-label="Overall mood distribution chart">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
                     <Pie
                       data={breakdownData}
                       cx="50%"
@@ -147,9 +148,14 @@ export default function Insights() {
                       paddingAngle={5}
                       dataKey="value"
                       stroke="none"
+                      tabIndex={-1}
                     >
                       {breakdownData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.colorHex} />
+                        <Cell
+                          key={`cell-${index}`}
+                          fill={entry.colorHex}
+                          aria-label={`${entry.name}: ${entry.value}`}
+                        />
                       ))}
                     </Pie>
                     <Tooltip 
@@ -157,8 +163,14 @@ export default function Insights() {
                       contentStyle={{ borderRadius: '12px', border: '1px solid hsl(var(--border))' }}
                     />
                     <Legend verticalAlign="bottom" height={36} iconType="circle" />
-                  </PieChart>
-                </ResponsiveContainer>
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+                <ul className="sr-only">
+                  {breakdownData.map((entry) => (
+                    <li key={entry.name}>{entry.name}: {entry.value}</li>
+                  ))}
+                </ul>
               </div>
             ) : (
               <div className="h-[300px] flex items-center justify-center text-muted-foreground">
@@ -183,7 +195,7 @@ function StatCard({ icon, label, value, subtext }: { icon: React.ReactNode, labe
           </div>
           <p className="text-sm font-medium text-muted-foreground">{label}</p>
         </div>
-        <h3 className="text-2xl font-serif text-foreground mb-1">{value}</h3>
+        <p className="text-2xl font-serif text-foreground mb-1">{value}</p>
         <p className="text-xs text-muted-foreground">{subtext}</p>
       </CardContent>
     </Card>

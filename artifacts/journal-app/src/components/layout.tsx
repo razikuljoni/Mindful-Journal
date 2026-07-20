@@ -1,5 +1,5 @@
 import { Link, useLocation } from "wouter";
-import { Book, Calendar, Feather, Home, LineChart, Wind, Sparkles } from "lucide-react";
+import { Bell, BellOff, Book, Calendar, Feather, Home, LineChart, Wind, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export function Layout({ children }: { children: React.ReactNode }) {
@@ -17,6 +17,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="min-h-[100dvh] flex flex-col md:flex-row bg-background">
+      <a className="skip-link" href="#main-content">
+        Skip to main content
+      </a>
       {/* Desktop Sidebar */}
       <aside className="hidden md:flex w-64 flex-col border-r border-border/50 bg-card/30 backdrop-blur-sm sticky top-0 h-screen overflow-y-auto">
         <div className="p-6 pb-2">
@@ -56,7 +59,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 flex flex-col relative pb-20 md:pb-0">
+      <main id="main-content" tabIndex={-1} className="flex-1 flex flex-col relative pb-20 md:pb-0">
         {/* Mobile Header */}
         <header className="md:hidden flex items-center justify-between p-4 bg-background/80 backdrop-blur-md sticky top-0 z-10 border-b border-border/50">
           <Link href="/" className="flex items-center gap-2">
@@ -100,11 +103,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
 // ─── Reminder toggle ──────────────────────────────────────────────────────────
 function ReminderToggle() {
   const [enabled, setEnabled] = useState(false);
-  const [permission, setPermission] = useState<NotificationPermission>("default");
 
   useEffect(() => {
     if ("Notification" in window) {
-      setPermission(Notification.permission);
       setEnabled(localStorage.getItem("luminary_reminders") === "true" && Notification.permission === "granted");
     }
   }, []);
@@ -114,7 +115,6 @@ function ReminderToggle() {
 
     if (!enabled) {
       const perm = await Notification.requestPermission();
-      setPermission(perm);
       if (perm === "granted") {
         localStorage.setItem("luminary_reminders", "true");
         setEnabled(true);
@@ -142,7 +142,11 @@ function ReminderToggle() {
             : "bg-muted/30 border-border text-muted-foreground hover:bg-accent"
         )}
       >
-        <span className="text-base">{enabled ? "🔔" : "🔕"}</span>
+        {enabled ? (
+          <Bell className="size-4" aria-hidden="true" />
+        ) : (
+          <BellOff className="size-4" aria-hidden="true" />
+        )}
         <span>{enabled ? "Reminders on" : "Enable reminders"}</span>
       </button>
     </div>

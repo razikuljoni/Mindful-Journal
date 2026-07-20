@@ -1,11 +1,11 @@
 import { useGetDashboard, useCreateMood, getGetDashboardQueryKey } from "@workspace/api-client-react";
 import { Link } from "wouter";
 import { motion } from "framer-motion";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
-import { Flame, PenLine, Sparkles, BookHeart, Quote, Wind, ChevronRight } from "lucide-react";
+import { Flame, PenLine, Sparkles, BookHeart, Quote, Wind, ChevronRight, Timer, X } from "lucide-react";
 import { MOOD_EMOJIS, MOOD_LABELS, getMoodEmoji, getMoodColor } from "@/lib/mood-utils";
 import { useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
@@ -57,10 +57,12 @@ function WeeklyCheckin() {
     >
       <Card className="border-primary/30 bg-primary/5 shadow-sm overflow-hidden">
         <button
+          type="button"
+          aria-label="Dismiss weekly check-in"
           onClick={() => setVisible(false)}
-          className="absolute top-3 right-3 text-muted-foreground hover:text-foreground transition-colors"
+          className="absolute top-1 right-1 z-10 inline-flex size-11 items-center justify-center rounded-xl text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
         >
-          ×
+          <X className="size-4" aria-hidden="true" />
         </button>
         <CardContent className="pt-5 pb-5">
           {answered ? (
@@ -75,14 +77,14 @@ function WeeklyCheckin() {
           ) : (
             <div className="space-y-4">
               <div>
-                <p className="text-xs font-semibold text-primary uppercase tracking-wider mb-1">Weekly Check-in</p>
-                <p className="font-serif text-lg text-foreground">How are you feeling compared to last week?</p>
+                <p className="text-xs font-semibold text-[#7f341f] uppercase tracking-wider mb-1">Weekly Check-in</p>
+                <p className="font-serif text-lg text-[#3f3732]">How are you feeling compared to last week?</p>
               </div>
               <div className="flex flex-wrap gap-2">
                 {([
-                  { key: "better", label: "🌱 Better", color: "text-emerald-600 border-emerald-200 bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950 dark:border-emerald-800 dark:text-emerald-400" },
-                  { key: "same", label: "〰️ About the same", color: "text-amber-600 border-amber-200 bg-amber-50 hover:bg-amber-100 dark:bg-amber-950 dark:border-amber-800 dark:text-amber-400" },
-                  { key: "harder", label: "🌊 Harder right now", color: "text-blue-600 border-blue-200 bg-blue-50 hover:bg-blue-100 dark:bg-blue-950 dark:border-blue-800 dark:text-blue-400" },
+                  { key: "better", label: "🌱 Better", color: "text-emerald-900 border-emerald-300 bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950 dark:border-emerald-800 dark:text-emerald-200" },
+                  { key: "same", label: "〰️ About the same", color: "text-amber-900 border-amber-300 bg-amber-50 hover:bg-amber-100 dark:bg-amber-950 dark:border-amber-800 dark:text-amber-200" },
+                  { key: "harder", label: "🌊 Harder right now", color: "text-blue-900 border-blue-300 bg-blue-50 hover:bg-blue-100 dark:bg-blue-950 dark:border-blue-800 dark:text-blue-200" },
                 ] as const).map(({ key, label, color }) => (
                   <Button
                     key={key}
@@ -174,9 +176,9 @@ export default function Dashboard() {
             <CardDescription className="flex items-center gap-2 text-primary font-medium">
               <PenLine className="w-4 h-4" /> Today's Prompt
             </CardDescription>
-            <CardTitle className="text-2xl pt-2 leading-relaxed text-foreground">
+            <h2 className="font-serif text-2xl pt-2 leading-relaxed text-foreground">
               {dashboard.todayPrompt?.text || "What's on your mind today?"}
-            </CardTitle>
+            </h2>
           </CardHeader>
           <CardContent>
             <Button asChild size="lg" className="rounded-xl px-8 mt-2">
@@ -192,7 +194,7 @@ export default function Dashboard() {
               <div className="p-4 bg-orange-100 dark:bg-orange-950 text-orange-600 dark:text-orange-400 rounded-full mb-4">
                 <Flame className="w-8 h-8" />
               </div>
-              <h3 className="font-serif text-3xl mb-1">{dashboard.entryStats.currentStreak} Days</h3>
+              <h2 className="font-serif text-3xl mb-1">{dashboard.entryStats.currentStreak} Days</h2>
               <p className="text-muted-foreground text-sm">Current journaling streak</p>
             </CardContent>
           </Card>
@@ -217,7 +219,7 @@ export default function Dashboard() {
         {/* How are you feeling */}
         <Card className="bg-card">
           <CardHeader>
-            <CardTitle className="text-xl">How are you feeling?</CardTitle>
+            <h2 className="font-serif text-xl leading-none tracking-tight">How are you feeling?</h2>
           </CardHeader>
           <CardContent>
             {dashboard.todayMood ? (
@@ -236,6 +238,7 @@ export default function Dashboard() {
                     key={mood}
                     onClick={() => handleMoodSelect(mood)}
                     disabled={createMood.isPending}
+                    aria-label={`Log mood: ${MOOD_LABELS[mood as keyof typeof MOOD_LABELS]}`}
                     className="flex flex-col items-center gap-2 p-2 hover:bg-accent rounded-xl transition-colors group disabled:opacity-50"
                     title={MOOD_LABELS[mood as keyof typeof MOOD_LABELS]}
                   >
@@ -260,10 +263,10 @@ export default function Dashboard() {
                 <CardDescription className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1">
                   <Sparkles className="w-3.5 h-3.5" /> Today's Activity
                 </CardDescription>
-                <CardTitle className="text-xl flex items-center gap-2">
-                  <span>{activity.emoji}</span>
+                <h2 className="font-serif text-xl leading-none tracking-tight flex items-center gap-2">
+                  <span aria-hidden="true">{activity.emoji}</span>
                   {activity.title}
-                </CardTitle>
+                </h2>
               </div>
               <Badge className={cn("text-xs", CATEGORY_COLORS[activity.category])}>
                 {activity.category}
@@ -273,7 +276,10 @@ export default function Dashboard() {
           <CardContent className="space-y-4">
             <p className="text-muted-foreground text-sm leading-relaxed">{activity.description}</p>
             <div className="flex items-center justify-between">
-              <span className="text-sm text-muted-foreground">⏱ {activity.duration}</span>
+              <span className="inline-flex items-center gap-1.5 text-sm text-muted-foreground">
+                <Timer className="size-4" aria-hidden="true" />
+                {activity.duration}
+              </span>
               <div className="flex gap-2">
                 {activity.id === "box-breathing" || activity.id === "478-breath" ? (
                   <Button size="sm" asChild className="rounded-xl">
@@ -297,7 +303,7 @@ export default function Dashboard() {
       {/* Recent entries */}
       <Card className="bg-card">
         <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle className="text-xl">Recent Reflections</CardTitle>
+          <h2 className="font-serif text-xl leading-none tracking-tight">Recent Reflections</h2>
           <Button variant="ghost" size="sm" asChild className="text-muted-foreground">
             <Link href="/entries">View all</Link>
           </Button>

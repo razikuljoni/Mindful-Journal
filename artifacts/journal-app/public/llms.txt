@@ -1,0 +1,13 @@
+# Mental Wellness Journal
+
+Luminary is a mindful journaling application for private reflection, mood tracking, breathing exercises, and personal wellbeing insights.
+
+## Main areas
+
+- [Home](/): Daily prompt, mood check-in, mindful activity, and recent reflections.
+- [Write](/write): Journal entry editor.
+- [Entries](/entries): Reflection history.
+- [Breathe](/breathe): Guided breathing exercises.
+- [Mindful](/mindful): Mindfulness guides.
+- [Calendar](/calendar): Journal calendar.
+- [Insights](/insights): Personal journaling insights.
