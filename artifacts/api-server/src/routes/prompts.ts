@@ -7,6 +7,12 @@ import {
 
 const router: IRouter = Router();
 
+const DEFAULT_TODAY_PROMPT = {
+  id: 0,
+  text: "What are you grateful for today?",
+  category: "general",
+};
+
 router.get("/prompts", async (_req, res): Promise<void> => {
   const prompts = await db.select().from(writingPromptsTable).orderBy(writingPromptsTable.id);
   res.json(ListPromptsResponse.parse(prompts));
@@ -15,7 +21,7 @@ router.get("/prompts", async (_req, res): Promise<void> => {
 router.get("/prompts/today", async (_req, res): Promise<void> => {
   const prompts = await db.select().from(writingPromptsTable);
   if (prompts.length === 0) {
-    res.status(404).json({ error: "No prompts available" });
+    res.json(GetTodayPromptResponse.parse(DEFAULT_TODAY_PROMPT));
     return;
   }
   // Deterministically pick a prompt based on the day of year

@@ -1,5 +1,5 @@
 import { useGetTodayPrompt, useCreateEntry } from "@workspace/api-client-react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useLocation } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 import { format } from "date-fns";
@@ -16,6 +16,8 @@ export default function Write() {
   const createEntry = useCreateEntry();
   const { toast } = useToast();
 
+  const promptId = prompt && prompt.id > 0 ? prompt.id : null;
+
   const [content, setContent] = useState("");
   const [mood, setMood] = useState<string | null>(null);
   const [isSaved, setIsSaved] = useState(false);
@@ -26,7 +28,7 @@ export default function Write() {
     createEntry.mutate({
       data: {
         content,
-        promptId: prompt?.id,
+        promptId,
         moodRating: mood ? getMoodNumber(mood) : null,
         date: format(new Date(), "yyyy-MM-dd"),
       }

@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Sparkles, ChevronRight, ChevronDown, CheckCircle2, X, Dices } from "lucide-react";
+import { Sparkles, ChevronRight, ChevronDown, CheckCircle2, Dices } from "lucide-react";
 import { MINDFUL_ACTIVITIES, CATEGORY_COLORS, type MindfulActivity } from "@/lib/activities";
 import { cn } from "@/lib/utils";
 import { Link } from "wouter";
@@ -132,9 +132,9 @@ function FocusGame() {
   return (
     <Card className="bg-card">
       <CardHeader>
-        <CardTitle className="text-xl flex items-center gap-2">
-          <Dices className="w-5 h-5 text-primary" /> Color Memory
-        </CardTitle>
+        <h2 className="text-xl flex items-center gap-2 font-semibold leading-none tracking-tight">
+          <Dices className="w-5 h-5 text-primary" aria-hidden="true" /> Color Memory
+        </h2>
         <CardDescription>Watch the sequence, repeat it. A mindful attention workout.</CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
@@ -156,7 +156,7 @@ function FocusGame() {
               transition={{ duration: 0.15 }}
               className="aspect-square rounded-2xl shadow-sm cursor-pointer disabled:cursor-default transition-opacity"
               style={{ backgroundColor: color, boxShadow: lit === i ? `0 0 20px ${color}80` : undefined }}
-              title={COLOR_NAMES[i]}
+              aria-label={`${COLOR_NAMES[i]} memory tile`}
             />
           ))}
         </div>
@@ -205,15 +205,17 @@ function ActivityCard({ activity, defaultOpen = false }: { activity: MindfulActi
   return (
     <Card className={cn("bg-card transition-all duration-200", done && "border-primary/30 bg-primary/5")}>
       <button
+        type="button"
         onClick={() => setOpen(!open)}
+        aria-expanded={open}
         className="w-full text-left"
       >
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <span className="text-2xl">{activity.emoji}</span>
+              <span className="text-2xl" aria-hidden="true">{activity.emoji}</span>
               <div>
-                <CardTitle className="text-base">{activity.title}</CardTitle>
+                <h2 className="text-base font-semibold leading-none tracking-tight">{activity.title}</h2>
                 <div className="flex items-center gap-2 mt-1">
                   <Badge variant="secondary" className={cn("text-xs", CATEGORY_COLORS[activity.category])}>
                     {activity.category}
@@ -222,7 +224,7 @@ function ActivityCard({ activity, defaultOpen = false }: { activity: MindfulActi
                 </div>
               </div>
             </div>
-            <ChevronDown className={cn("w-4 h-4 text-muted-foreground transition-transform duration-200", open && "rotate-180")} />
+            <ChevronDown className={cn("w-4 h-4 text-muted-foreground transition-transform duration-200", open && "rotate-180")} aria-hidden="true" />
           </div>
         </CardHeader>
       </button>
@@ -283,7 +285,7 @@ export default function MindfulPage() {
     >
       <header className="space-y-2">
         <h1 className="text-3xl md:text-4xl font-serif text-foreground flex items-center gap-3">
-          <Sparkles className="w-7 h-7 text-primary opacity-80" />
+          <Sparkles className="w-7 h-7 text-primary opacity-80" aria-hidden="true" />
           Mindful Activities
         </h1>
         <p className="text-muted-foreground text-lg">
@@ -296,7 +298,9 @@ export default function MindfulPage() {
         {(["activities", "yoga", "game"] as const).map((tab) => (
           <button
             key={tab}
+            type="button"
             onClick={() => setActiveTab(tab)}
+            aria-pressed={activeTab === tab}
             className={cn(
               "px-4 py-2.5 text-sm font-medium border-b-2 transition-all duration-200 capitalize",
               activeTab === tab
@@ -304,7 +308,7 @@ export default function MindfulPage() {
                 : "border-transparent text-muted-foreground hover:text-foreground"
             )}
           >
-            {tab === "activities" ? "🌿 Daily Practices" : tab === "yoga" ? "🧘 Yoga Guide" : "🎮 Focus Game"}
+            {tab === "activities" ? "Daily Practices" : tab === "yoga" ? "Yoga Guide" : "Focus Game"}
           </button>
         ))}
       </div>
@@ -340,15 +344,17 @@ export default function MindfulPage() {
             {YOGA_POSES.map((pose, idx) => (
               <Card key={pose.name} className="bg-card">
                 <button
+                  type="button"
                   className="w-full text-left"
                   onClick={() => setYogaOpen(yogaOpen === idx ? null : idx)}
+                  aria-expanded={yogaOpen === idx}
                 >
                   <CardHeader className="pb-3">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
-                        <span className="text-2xl">{pose.emoji}</span>
+                        <span className="text-2xl" aria-hidden="true">{pose.emoji}</span>
                         <div>
-                          <CardTitle className="text-base">{pose.name}</CardTitle>
+                          <h2 className="text-base font-semibold leading-none tracking-tight">{pose.name}</h2>
                           <div className="flex items-center gap-2 mt-0.5">
                             <span className="text-xs text-muted-foreground italic">{pose.sanskrit}</span>
                             <span className="text-xs text-muted-foreground">•</span>
@@ -357,7 +363,7 @@ export default function MindfulPage() {
                           </div>
                         </div>
                       </div>
-                      <ChevronDown className={cn("w-4 h-4 text-muted-foreground transition-transform duration-200", yogaOpen === idx && "rotate-180")} />
+                      <ChevronDown className={cn("w-4 h-4 text-muted-foreground transition-transform duration-200", yogaOpen === idx && "rotate-180")} aria-hidden="true" />
                     </div>
                   </CardHeader>
                 </button>

@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Play, Pause, RotateCcw, Volume2, VolumeX, CheckCircle2, Wind } from "lucide-react";
@@ -240,7 +240,6 @@ export default function BreathePage() {
     setSessionStartTime(null);
   };
 
-  const progress = currentSecond / totalPhaseDuration;
   const circleScale = isRunning || isComplete
     ? currentPhase?.scale ?? 1
     : 1;
@@ -249,7 +248,7 @@ export default function BreathePage() {
     <div className="space-y-8 max-w-3xl mx-auto">
       <header className="space-y-1">
         <h1 className="text-3xl md:text-4xl font-serif text-foreground flex items-center gap-3">
-          <Wind className="w-8 h-8 text-primary opacity-80" />
+          <Wind className="w-8 h-8 text-primary opacity-80" aria-hidden="true" />
           Breathing
         </h1>
         <p className="text-muted-foreground text-lg">
@@ -262,17 +261,19 @@ export default function BreathePage() {
         {TECHNIQUES.map((t) => (
           <button
             key={t.id}
+            type="button"
             onClick={() => { if (!isRunning) setSelectedTechnique(t); }}
             disabled={isRunning}
+            aria-pressed={selectedTechnique.id === t.id}
             className={cn(
               "flex flex-col items-center gap-1.5 p-3 rounded-2xl border text-sm font-medium transition-all duration-200",
               selectedTechnique.id === t.id
-                ? "border-primary bg-primary/10 text-primary shadow-sm"
+                ? "border-primary bg-primary/10 text-[#7f341f] shadow-sm"
                 : "border-border bg-card text-muted-foreground hover:bg-accent hover:text-foreground",
               isRunning && selectedTechnique.id !== t.id && "opacity-40 cursor-not-allowed"
             )}
           >
-            <span className="text-xl">{t.emoji}</span>
+            <span className="text-xl" aria-hidden="true">{t.emoji}</span>
             <span className="leading-tight text-center">{t.name}</span>
           </button>
         ))}
@@ -358,7 +359,7 @@ export default function BreathePage() {
             {/* Phase progress dots */}
             {isRunning && !isComplete && (
               <div className="flex items-center gap-2">
-                {selectedTechnique.phases.map((phase, i) => (
+                {selectedTechnique.phases.map((_, i) => (
                   <div
                     key={i}
                     className={cn(
@@ -398,40 +399,46 @@ export default function BreathePage() {
             {/* Controls */}
             <div className="flex items-center gap-3">
               <Button
+                type="button"
                 variant="outline"
                 size="icon"
-                className="rounded-full"
+                className="rounded-full min-w-11 min-h-11"
                 onClick={handleReset}
+                aria-label="Reset breathing session"
               >
-                <RotateCcw className="w-4 h-4" />
+                <RotateCcw className="w-4 h-4" aria-hidden="true" />
               </Button>
 
               {isRunning ? (
                 <Button
+                  type="button"
                   size="lg"
                   className="rounded-full px-10 text-base"
                   onClick={handlePause}
                 >
-                  <Pause className="w-5 h-5 mr-2" /> Pause
+                  <Pause className="w-5 h-5 mr-2" aria-hidden="true" /> Pause
                 </Button>
               ) : (
                 <Button
+                  type="button"
                   size="lg"
                   className="rounded-full px-10 text-base"
                   onClick={handleStart}
                 >
-                  <Play className="w-5 h-5 mr-2" />
+                  <Play className="w-5 h-5 mr-2" aria-hidden="true" />
                   {isComplete ? "Again" : "Start"}
                 </Button>
               )}
 
               <Button
+                type="button"
                 variant="outline"
                 size="icon"
-                className="rounded-full"
+                className="rounded-full min-w-11 min-h-11"
                 onClick={() => setSoundEnabled(!soundEnabled)}
+                aria-label={soundEnabled ? "Mute session sound" : "Enable session sound"}
               >
-                {soundEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
+                {soundEnabled ? <Volume2 className="w-4 h-4" aria-hidden="true" /> : <VolumeX className="w-4 h-4" aria-hidden="true" />}
               </Button>
             </div>
           </CardContent>
@@ -442,12 +449,12 @@ export default function BreathePage() {
           {/* Technique info */}
           <Card className="bg-card">
             <CardHeader className="pb-3">
-              <CardTitle className="text-lg">{selectedTechnique.name}</CardTitle>
+              <h2 className="text-lg font-semibold leading-none tracking-tight">{selectedTechnique.name}</h2>
               <CardDescription>{selectedTechnique.description}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <Badge variant="secondary" className="text-xs font-medium">
-                ✨ {selectedTechnique.benefit}
+              <Badge variant="outline" className="bg-card text-xs font-medium text-foreground">
+                <span aria-hidden="true">✨ </span>{selectedTechnique.benefit}
               </Badge>
 
               {/* Phase guide */}
@@ -475,17 +482,21 @@ export default function BreathePage() {
                   <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Sets</p>
                   <div className="flex items-center gap-3">
                     <Button
+                      type="button"
                       variant="outline"
                       size="sm"
-                      className="rounded-full w-8 h-8 p-0"
+                      className="rounded-full w-11 h-11 p-0"
                       onClick={() => setTargetSets(Math.max(1, targetSets - 1))}
+                      aria-label="Decrease sets"
                     >−</Button>
                     <span className="text-lg font-medium w-6 text-center">{targetSets}</span>
                     <Button
+                      type="button"
                       variant="outline"
                       size="sm"
-                      className="rounded-full w-8 h-8 p-0"
+                      className="rounded-full w-11 h-11 p-0"
                       onClick={() => setTargetSets(Math.min(20, targetSets + 1))}
+                      aria-label="Increase sets"
                     >+</Button>
                   </div>
                 </div>
@@ -497,7 +508,7 @@ export default function BreathePage() {
           {stats && (
             <Card className="bg-card">
               <CardHeader className="pb-3">
-                <CardTitle className="text-base">Your Progress</CardTitle>
+                <h2 className="text-base font-semibold leading-none tracking-tight">Your Progress</h2>
               </CardHeader>
               <CardContent className="grid grid-cols-2 gap-3 text-sm">
                 <div className="flex flex-col items-center justify-center bg-muted/50 rounded-xl py-3">

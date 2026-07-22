@@ -5,7 +5,7 @@ import { format } from "date-fns";
 import { MOOD_EMOJIS, MOOD_LABELS } from "@/lib/mood-utils";
 import { BookX } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { JournalEntry } from "@workspace/api-client-react/src/generated/api.schemas";
+import { JournalEntry } from "@workspace/api-client-react";
 
 export default function Entries() {
   const { data, isLoading } = useListEntries({ limit: 100 });
@@ -62,9 +62,9 @@ export default function Entries() {
         <div className="space-y-12">
           {Object.entries(groupedEntries).map(([month, monthEntries]) => (
             <div key={month} className="space-y-4">
-              <h3 className="text-lg font-serif text-muted-foreground border-b border-border/50 pb-2">
+              <h2 className="text-lg font-serif text-muted-foreground border-b border-border/50 pb-2">
                 {month}
-              </h3>
+              </h2>
               <div className="space-y-3">
                 {monthEntries.map((entry, index) => (
                   <motion.div

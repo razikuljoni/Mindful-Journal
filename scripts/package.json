@@ -4,6 +4,12 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "build:workspace": "tsx ./src/build-workspace.ts",
+    "check:env": "tsx ./src/check-env.ts",
+    "db:push": "tsx ./src/db-push.ts",
+    "dev:api": "tsx ./src/dev-api.ts",
+    "dev:web": "tsx ./src/dev-web.ts",
+    "dev:mockup": "tsx ./src/dev-mockup.ts",
     "hello": "tsx ./src/hello.ts",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },

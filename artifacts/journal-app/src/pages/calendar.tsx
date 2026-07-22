@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { format, addMonths, subMonths, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isToday, parseISO } from "date-fns";
+import { format, addMonths, subMonths, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isToday } from "date-fns";
 import { useGetMoodCalendar, getGetMoodCalendarQueryKey } from "@workspace/api-client-react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { motion } from "framer-motion";
@@ -49,14 +49,14 @@ export default function Calendar() {
         </div>
 
         <div className="flex items-center gap-4 bg-card px-4 py-2 rounded-2xl border border-card-border shadow-sm">
-          <Button variant="ghost" size="icon" onClick={handlePrevMonth}>
-            <ChevronLeft className="w-5 h-5" />
+          <Button type="button" variant="ghost" size="icon" aria-label="Previous month" onClick={handlePrevMonth}>
+            <ChevronLeft className="w-5 h-5" aria-hidden="true" />
           </Button>
           <div className="w-32 text-center font-serif text-lg font-medium">
             {format(currentDate, "MMMM yyyy")}
           </div>
-          <Button variant="ghost" size="icon" onClick={handleNextMonth} disabled={isSameMonth(currentDate, new Date())}>
-            <ChevronRight className="w-5 h-5" />
+          <Button type="button" variant="ghost" size="icon" aria-label="Next month" onClick={handleNextMonth} disabled={isSameMonth(currentDate, new Date())}>
+            <ChevronRight className="w-5 h-5" aria-hidden="true" />
           </Button>
         </div>
       </header>
@@ -99,14 +99,14 @@ export default function Calendar() {
                 >
                   <div className={cn(
                     "w-full h-full rounded-2xl flex flex-col items-center justify-center p-1 md:p-2 transition-all duration-300 border-2 border-transparent",
-                    moodData ? MOOD_COLORS[moodData.mood as keyof typeof MOOD_COLORS] : "bg-muted/30 text-muted-foreground",
+                    moodData ? "bg-card text-foreground border-border" : "bg-muted/30 text-foreground",
                     isCurrentDay && !moodData && "border-primary/50",
                     isCurrentDay && moodData && "ring-2 ring-foreground ring-offset-2 ring-offset-background",
-                    moodData && "hover:scale-105 hover:shadow-md cursor-pointer"
+                    moodData && "shadow-sm"
                   )}>
-                    <span className="text-xs md:text-sm font-medium opacity-80 mb-1">{format(date, "d")}</span>
+                    <span className="text-xs md:text-sm font-medium mb-1">{format(date, "d")}</span>
                     {moodData && (
-                      <span className="text-xl md:text-3xl filter drop-shadow-sm group-hover:scale-110 transition-transform">
+                      <span className="text-xl md:text-3xl" aria-label={MOOD_LABELS[moodData.mood as keyof typeof MOOD_LABELS]}>
                         {MOOD_EMOJIS[moodData.mood as keyof typeof MOOD_EMOJIS]}
                       </span>
                     )}

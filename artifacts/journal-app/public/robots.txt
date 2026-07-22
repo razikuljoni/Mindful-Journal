@@ -1,2 +1,4 @@
 User-agent: *
 Allow: /
+
+Sitemap: https://mindful-journal.vercel.app/sitemap.xml
