@@ -126,14 +126,6 @@ globalThis.__dirname = __bannerPath.dirname(globalThis.__filename);
     outdir: distDir,
     outExtension: { ".js": ".mjs" },
   });
-
-  // Build 2: Vercel handler into api/ for serverless function import (local to api/ dir)
-  await esbuild({
-    ...sharedEsbuildOptions,
-    entryPoints: [path.resolve(artifactDir, "src/vercel.ts")],
-    outdir: path.resolve(artifactDir, "api"),
-    outExtension: { ".js": ".mjs" },
-  });
 }
 
 buildAll().catch((err) => {

@@ -2,8 +2,5 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "installCommand": "pnpm install",
   "buildCommand": "pnpm run build",
-  "framework": null,
-  "routes": [
-    { "src": "/api/(.*)", "dest": "/api/index.js" }
-  ]
+  "framework": null
 }
