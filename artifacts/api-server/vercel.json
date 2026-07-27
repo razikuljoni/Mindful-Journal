@@ -3,16 +3,10 @@
   "installCommand": "pnpm install",
   "buildCommand": "pnpm run build",
   "framework": null,
-  "builds": [
+  "rewrites": [
     {
-      "src": "api/index.js",
-      "use": "@vercel/node"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "/api/index.js"
+      "source": "/api/:path+",
+      "destination": "/api"
     }
   ]
 }
