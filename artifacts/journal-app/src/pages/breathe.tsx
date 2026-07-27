@@ -208,6 +208,13 @@ export default function BreathePage() {
               description: `${currentSet} set${currentSet > 1 ? "s" : ""} of ${selectedTechnique.name} complete.`,
             });
           },
+          onError: () => {
+            toast({
+              title: "Couldn't save session",
+              description: "Something went wrong. Please try again.",
+              variant: "destructive",
+            });
+          },
         }
       );
     },

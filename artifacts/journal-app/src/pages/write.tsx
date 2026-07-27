@@ -42,6 +42,13 @@ export default function Write() {
         setTimeout(() => {
           setLocation("/");
         }, 1500);
+      },
+      onError: () => {
+        toast({
+          title: "Couldn't save entry",
+          description: "Something went wrong. Please try again.",
+          variant: "destructive",
+        });
       }
     });
   };

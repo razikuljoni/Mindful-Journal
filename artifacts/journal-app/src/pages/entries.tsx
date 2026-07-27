@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { JournalEntry } from "@workspace/api-client-react";
 
 export default function Entries() {
-  const { data, isLoading } = useListEntries({ limit: 100 });
+  const { data, isLoading, isError } = useListEntries({ limit: 100 });
 
   if (isLoading) {
     return (
@@ -18,6 +18,21 @@ export default function Entries() {
           {[...Array(5)].map((_, i) => (
             <div key={i} className="h-24 bg-card rounded-2xl" />
           ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="space-y-12">
+        <header>
+          <h1 className="text-3xl md:text-4xl font-serif text-foreground mb-2">Your Journal</h1>
+          <p className="text-muted-foreground">Every entry is a step on your journey.</p>
+        </header>
+        <div className="flex flex-col items-center justify-center py-20 text-center bg-card rounded-3xl border border-card-border">
+          <p className="text-lg font-medium text-foreground mb-2">Couldn't load entries</p>
+          <p className="text-muted-foreground text-sm">Something went wrong. Please try again later.</p>
         </div>
       </div>
     );

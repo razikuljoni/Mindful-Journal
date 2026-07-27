@@ -30,7 +30,7 @@ export default function EntryView() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
-  const { data: entry, isLoading } = useGetEntry(entryId, { 
+  const { data: entry, isLoading, isError } = useGetEntry(entryId, { 
     query: { enabled: !!entryId && !isNaN(entryId), queryKey: getGetEntryQueryKey(entryId) } 
   });
   
@@ -47,6 +47,10 @@ export default function EntryView() {
       <div className="h-10 w-3/4 bg-muted rounded mt-8"></div>
       <div className="h-40 w-full bg-muted rounded"></div>
     </div>;
+  }
+
+  if (isError) {
+    return <div className="text-center p-20 text-muted-foreground">Failed to load entry. Please try again later.</div>;
   }
 
   if (!entry) {
@@ -73,6 +77,13 @@ export default function EntryView() {
           queryClient.setQueryData(getGetEntryQueryKey(entryId), updated);
           setIsEditing(false);
           toast({ title: "Entry updated" });
+        },
+        onError: () => {
+          toast({
+            title: "Couldn't update entry",
+            description: "Something went wrong. Please try again.",
+            variant: "destructive",
+          });
         }
       }
     );
@@ -86,6 +97,13 @@ export default function EntryView() {
           queryClient.invalidateQueries({ queryKey: getListEntriesQueryKey() });
           toast({ title: "Entry deleted" });
           setLocation("/entries");
+        },
+        onError: () => {
+          toast({
+            title: "Couldn't delete entry",
+            description: "Something went wrong. Please try again.",
+            variant: "destructive",
+          });
         }
       }
     );

@@ -12,7 +12,7 @@ export default function Calendar() {
   const [currentDate, setCurrentDate] = useState(new Date());
   
   const monthStr = format(currentDate, "yyyy-MM");
-  const { data: calendarData, isLoading } = useGetMoodCalendar({ month: monthStr }, {
+  const { data: calendarData, isLoading, isError } = useGetMoodCalendar({ month: monthStr }, {
     query: { queryKey: getGetMoodCalendarQueryKey({ month: monthStr }) }
   });
 
@@ -61,6 +61,16 @@ export default function Calendar() {
         </div>
       </header>
 
+      {isError ? (
+        <Card className="p-6 md:p-8 bg-card border-card-border shadow-sm">
+          <div className="h-96 flex items-center justify-center text-center">
+            <div>
+              <p className="text-lg font-medium text-foreground mb-2">Couldn't load calendar</p>
+              <p className="text-muted-foreground text-sm">Something went wrong. Please try again later.</p>
+            </div>
+          </div>
+        </Card>
+      ) : (
       <Card className="p-6 md:p-8 bg-card border-card-border shadow-sm">
         {/* Days of week header */}
         <div className="grid grid-cols-7 gap-2 md:gap-4 mb-4 text-center">
@@ -125,6 +135,7 @@ export default function Calendar() {
           </div>
         )}
       </Card>
+      )}
 
       {/* Legend */}
       <div className="flex flex-wrap justify-center gap-4 md:gap-8 pt-4">

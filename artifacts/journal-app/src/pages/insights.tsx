@@ -7,11 +7,26 @@ import { format, parseISO } from "date-fns";
 import { Activity, PenTool, Flame, CalendarDays } from "lucide-react";
 
 export default function Insights() {
-  const { data: moodStats, isLoading: isLoadingMoods } = useGetMoodStats();
-  const { data: entryStats, isLoading: isLoadingEntries } = useGetEntryStats();
+  const { data: moodStats, isLoading: isLoadingMoods, isError: isErrorMoods } = useGetMoodStats();
+  const { data: entryStats, isLoading: isLoadingEntries, isError: isErrorEntries } = useGetEntryStats();
 
   if (isLoadingMoods || isLoadingEntries) {
     return <div className="p-8 text-center text-muted-foreground animate-pulse">Gathering your insights...</div>;
+  }
+
+  if (isErrorMoods || isErrorEntries) {
+    return (
+      <div className="space-y-8">
+        <header>
+          <h1 className="text-3xl md:text-4xl font-serif text-foreground mb-2">Insights</h1>
+          <p className="text-muted-foreground">Understanding your patterns and growth over time.</p>
+        </header>
+        <div className="flex flex-col items-center justify-center py-20 text-center bg-card rounded-3xl border border-card-border">
+          <p className="text-lg font-medium text-foreground mb-2">Couldn't load insights</p>
+          <p className="text-muted-foreground text-sm">Something went wrong. Please try again later.</p>
+        </div>
+      </div>
+    );
   }
 
   if (!moodStats || !entryStats) return null;

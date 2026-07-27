@@ -107,7 +107,7 @@ function WeeklyCheckin() {
 
 // ─── Main dashboard ───────────────────────────────────────────────────────────
 export default function Dashboard() {
-  const { data: dashboard, isLoading } = useGetDashboard();
+  const { data: dashboard, isLoading, isError } = useGetDashboard();
   const createMood = useCreateMood();
   const queryClient = useQueryClient();
   const { toast } = useToast();
@@ -129,6 +129,13 @@ export default function Dashboard() {
             description: `You're feeling ${moodName} today.`,
           });
         },
+        onError: () => {
+          toast({
+            title: "Couldn't log mood",
+            description: "Something went wrong. Please try again.",
+            variant: "destructive",
+          });
+        },
       }
     );
   };
@@ -141,6 +148,15 @@ export default function Dashboard() {
           <div className="h-48 bg-muted rounded-2xl md:col-span-2" />
           <div className="h-48 bg-muted rounded-2xl" />
         </div>
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="flex flex-col items-center justify-center py-20 text-center">
+        <p className="text-lg font-medium text-foreground mb-2">Something went wrong</p>
+        <p className="text-muted-foreground text-sm">We couldn't load your dashboard. Please try again later.</p>
       </div>
     );
   }
